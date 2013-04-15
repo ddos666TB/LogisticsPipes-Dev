@@ -26,7 +26,7 @@ import cpw.mods.fml.common.network.Player;
 import net.minecraft.client.renderer.texture.IconRegister;
 
 public class RemoteOrderer extends Item {
-	final static Icon[] icons = new Icon[17];
+	final static Icon[] _icons = new Icon[17];
 	
 	public RemoteOrderer(int id) {
 		super(id);
@@ -34,7 +34,10 @@ public class RemoteOrderer extends Item {
 
 	@Override
 	public void registerIcons(IconRegister par1IconRegister) {
-		LogisticsPipes.remoteOrdererIconProvider.registerIcons(par1IconRegister);
+		for(int i=0;i<17;i++)
+		{
+			_icons[i]=par1IconRegister.registerIcon("logisticspipes:"+getUnlocalizedName().replace("item.", "")+"/"+i);
+		}
 	}
 
 	@Override
@@ -45,7 +48,9 @@ public class RemoteOrderer extends Item {
 
 	@Override
 	public Icon getIconFromDamage(int par1) {
-		return LogisticsPipes.remoteOrdererIconProvider.getIcon(par1);
+		if(par1>16)
+			par1=0;
+		return _icons[par1];
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })

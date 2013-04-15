@@ -1,7 +1,7 @@
 package logisticspipes.pipes;
 
+import net.minecraft.util.Icon;
 import net.minecraftforge.common.ForgeDirection;
-import buildcraft.api.core.IIconProvider;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import logisticspipes.textures.Textures;
@@ -22,7 +22,6 @@ public class PipeLogisticsChassiMk1 extends PipeLogisticsChassi{
 	public int getChassiSize() {
 		return 1;
 	}
-
 
 	@Override
 	public int getIconIndex(ForgeDirection direction) {

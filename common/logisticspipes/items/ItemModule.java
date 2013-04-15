@@ -36,7 +36,6 @@ import logisticspipes.pipes.basic.LogisticsTileGenericPipe;
 import logisticspipes.proxy.MainProxy;
 import logisticspipes.utils.ItemIdentifier;
 import logisticspipes.utils.SimpleInventory;
-import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -109,15 +108,15 @@ public class ItemModule extends LogisticsItem {
 		private String name;
 		private int id;
 		private Class<? extends ILogisticsModule> moduleClass;
-		private int textureIndex = -1;
-		
+		private Icon textureIndex = null;
+
 		private Module(int id, String name, Class<? extends ILogisticsModule> moduleClass) {
 			this.id = id;
 			this.name = name;
 			this.moduleClass = moduleClass;
 		}
 
-		private Module(int id, String name, Class<? extends ILogisticsModule> moduleClass, int textureIndex) {
+		private Module(int id, String name, Class<? extends ILogisticsModule> moduleClass, Icon textureIndex) {
 			this.id = id;
 			this.name = name;
 			this.moduleClass = moduleClass;
@@ -156,7 +155,7 @@ public class ItemModule extends LogisticsItem {
 			return name;
 		}
 
-		private int getTextureIndex() {
+		private Icon getTextureIndex() {
 			return textureIndex;
 		}
 	}
@@ -167,7 +166,7 @@ public class ItemModule extends LogisticsItem {
 	}
 
 	public void loadModules() {
-		registerModule(BLANK					, "Blank module"				, null);
+		/*registerModule(BLANK					, "Blank module"				, null, Textures.LOGISTICS);
 		registerModule(ITEMSINK					, "ItemSink module"				, ModuleItemSink.class);
 		registerModule(PASSIVE_SUPPLIER			, "Passive Supplier module"		, ModulePassiveSupplier.class);
 		registerModule(EXTRACTOR				, "Extractor module"			, ModuleExtractor.class);
@@ -188,9 +187,9 @@ public class ItemModule extends LogisticsItem {
 		registerModule(APIARISTREFILLER			, "Apiary Refiller module"		, ModuleApiaristRefiller.class);
 		registerModule(APIARISTTERMINUS			, "Drone Terminus module"		, ModuleApiaristTerminus.class);
 		registerModule(MODBASEDITEMSINK			, "Mod Based ItemSink module"	, ModuleModBasedItemSink.class);
-		registerModule(THAUMICASPECTSINK		, "Thaumic AspectSink module"	, ModuleThaumicAspectSink.class, 98);
+		registerModule(THAUMICASPECTSINK		, "Thaumic AspectSink module"	, ModuleThaumicAspectSink.class, 98);*/
 	}
-
+/*
 	public void registerModule(int id, String name, Class<? extends ILogisticsModule> moduleClass) {
 		boolean flag = true;
 		for(Module module:modules) {
@@ -205,9 +204,9 @@ public class ItemModule extends LogisticsItem {
 		} else {
 			throw new UnsupportedOperationException("Someting went wrong while registering a new Logistics Pipe Module. (No name given)");
 		}
-	}
+	}*/
 
-	public void registerModule(int id, String name, Class<? extends ILogisticsModule> moduleClass, int textureId) {
+	public void registerModule(int id, String name, Class<? extends ILogisticsModule> moduleClass, Icon textureId) {
 		boolean flag = true;
 		for(Module module:modules) {
 			if(module.getId() == id) {
@@ -307,15 +306,29 @@ public class ItemModule extends LogisticsItem {
 
 	@Override
 	public Icon getIconFromDamage(int i) {
+		// should set and store TextureIndex with this object.
 		for(Module module:modules) {
 			if(module.getId() == i) {
-				if(module.getTextureIndex() != -1) {
-					LogisticsPipes.moduleIconProvider.getIcon(module.getTextureIndex());
+				if(module.getTextureIndex() != null) {
+					return module.getTextureIndex();
 				}
 			}
 		}
+		return null;
+/*
+		if (i >= 500){
+			return 5 * 16 + (i - 500);
+		}
 
-		return LogisticsPipes.moduleIconProvider.getIcon(i);
+		if (i >= 200){
+			return 4 * 16 + (i - 200);
+		}
+
+		if (i >= 100){
+			return 3 * 16 + (i - 100);
+		}
+
+		return 2 * 16 + i;*/
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })

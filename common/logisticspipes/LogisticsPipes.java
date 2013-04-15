@@ -31,8 +31,6 @@ import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import buildcraft.api.core.IIconProvider;
-
 import logisticspipes.blocks.LogisticsSignBlock;
 import logisticspipes.blocks.LogisticsSolidBlock;
 import logisticspipes.blocks.powertile.LogisticsPowerJuntionTileEntity_BuildCraft;
@@ -83,9 +81,6 @@ import logisticspipes.renderer.LogisticsHUDRenderer;
 import logisticspipes.routing.RouterManager;
 import logisticspipes.routing.ServerRouter;
 import logisticspipes.textures.Textures;
-import logisticspipes.textures.provider.DummyProvider;
-import logisticspipes.textures.provider.ModuleIconProvider;
-import logisticspipes.textures.provider.RemoteOrdererIconProvider;
 import logisticspipes.ticks.ClientPacketBufferHandlerThread;
 import logisticspipes.ticks.HudUpdateTick;
 import logisticspipes.ticks.QueuedTasks;
@@ -96,10 +91,13 @@ import logisticspipes.ticks.WorldTickHandler;
 import logisticspipes.utils.InventoryUtilFactory;
 import logisticspipes.utils.LiquidIdentifier;
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.src.ModLoader;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.ForgeSubscribe;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.FingerprintWarning;
@@ -121,6 +119,7 @@ import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.relauncher.FMLInjectionData;
 import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 @Mod(
 		modid = "LogisticsPipes|Main",
@@ -221,10 +220,6 @@ public class LogisticsPipes {
 	public static Logger log;
 	public static Logger requestLog;
 	
-	//IconProviders
-	public static IIconProvider remoteOrdererIconProvider = new RemoteOrdererIconProvider();
-	public static IIconProvider moduleIconProvider = new ModuleIconProvider();
-	public static IIconProvider dummyIconProvider = new DummyProvider();
 	
 	@Init
 	public void init(FMLInitializationEvent event) {
@@ -239,8 +234,6 @@ public class LogisticsPipes {
 		SimpleServiceLocator.setSpecialConnectionHandler(new SpecialPipeConnection());
 		SimpleServiceLocator.setSpecialConnectionHandler(new SpecialTileConnection());
 		SimpleServiceLocator.setLogisticsLiquidManager(new LogisticsLiquidManager());
-		
-		textures.load(event);
 		
 		if(event.getSide().isClient()) {
 			SimpleServiceLocator.buildCraftProxy.registerLocalization();
@@ -285,11 +278,13 @@ public class LogisticsPipes {
 			log.severe("Certificate not correct");
 			log.severe("This in not a LogisticsPipes version from RS485.");
 		}
+		MinecraftForge.EVENT_BUS.register(this);
 	}
 	
 	@SuppressWarnings("deprecation")
 	@PostInit
 	public void PostLoad(FMLPostInitializationEvent event) {
+		
 		ProxyManager.load();
 		SpecialInventoryHandlerManager.load();
 
@@ -301,6 +296,7 @@ public class LogisticsPipes {
 		
 		LogisticsItemCard = new LogisticsItemCard(Configs.ITEM_CARD_ID);
 		LogisticsItemCard.setUnlocalizedName("logisticsItemCard");
+		//LogisticsItemCard.setTabToDisplayOn(CreativeTabs.tabRedstone);
 		
 		LogisticsRemoteOrderer = new RemoteOrderer(Configs.LOGISTICSREMOTEORDERER_ID);
 		LogisticsRemoteOrderer.setUnlocalizedName("remoteOrdererItem");
@@ -333,7 +329,7 @@ public class LogisticsPipes {
 		UpgradeItem.setUnlocalizedName("itemUpgrade");
 		UpgradeItem.loadUpgrades();
 		
-		LogisticsUpgradeManager = new LogisticsItem(Configs.ITEM_UPGRADE_MANAGER_ID);
+		LogisticsUpgradeManager = new LogisticsItem(Configs.ITEM_UPGRADE_MANAGER_ID,Textures.BASE_TEXTURE_FILE);
 		LogisticsUpgradeManager.setUnlocalizedName("upgradeManagerItem");
 		
 		if(DEBUG) {
@@ -375,10 +371,8 @@ public class LogisticsPipes {
 		
 		//Blocks
 		logisticsSign = new LogisticsSignBlock(Configs.LOGISTICS_SIGN_ID);
-		logisticsSign.setUnlocalizedName("logisticsSign");
 		ModLoader.registerBlock(logisticsSign);
 		logisticsSolidBlock = new LogisticsSolidBlock(Configs.LOGISTICS_SOLID_BLOCK_ID);
-		logisticsSolidBlock.setUnlocalizedName("logisticsSolidBlock");
 		ModLoader.registerBlock(logisticsSolidBlock, LogisticsSolidBlockItem.class);
 		
 		//Power Junction
@@ -432,7 +426,18 @@ public class LogisticsPipes {
 	public void registerCommands(FMLServerStartingEvent event) {
 		event.registerServerCommand(new LogisticsPipesCommand());
 	}
-	
+	/*
+	 * @Author gejzer
+	 * subscribe forge pre stich event to register common texture
+	 */
+	@ForgeSubscribe
+	@SideOnly(Side.CLIENT)
+	public void textureHook(TextureStitchEvent.Pre event){
+		int i=0;
+		if (event.map == Minecraft.getMinecraft().renderEngine.textureMapItems) {
+			textures.registerItemIcons(event.map);
+		} 
+	}
 	@FingerprintWarning
 	public void certificateWarning(FMLFingerprintViolationEvent warning) {
 		if(!DEBUG) {

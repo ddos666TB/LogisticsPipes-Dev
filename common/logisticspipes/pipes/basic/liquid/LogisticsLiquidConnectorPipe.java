@@ -4,6 +4,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import logisticspipes.LogisticsPipes;
 import logisticspipes.textures.Textures;
+import logisticspipes.textures.provider.DummyProvider;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.transport.Pipe;
@@ -23,7 +24,8 @@ public class LogisticsLiquidConnectorPipe extends Pipe {
 	@SideOnly(Side.CLIENT)
 	public IIconProvider getIconProvider() {
 		// TODO Auto-generated method stub
-		return LogisticsPipes.dummyIconProvider;
+		//return LogisticsPipes.dummyIconProvider;
+		return new DummyProvider();
 	}
 
 

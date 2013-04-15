@@ -222,8 +222,9 @@ public abstract class GuiOrderer extends KraphtBaseGuiScreen implements IItemSea
 		
 		if(!listbyserver) {
 			int graphic = ((int)(System.currentTimeMillis() / 250) % 5);
-			GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture("/gui/icons.png"));
-            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+//			GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture());
+			mc.renderEngine.bindTexture("/gui/icons.png");
+			GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
             Tessellator var9 = Tessellator.instance;
             var9.startDrawingQuads();
             int xPosition = xCenter - 50;

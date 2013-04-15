@@ -3,33 +3,29 @@ package logisticspipes.items;
 import java.util.List;
 
 import logisticspipes.textures.Textures;
+import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Icon;
 
 public class ItemParts extends LogisticsItem {
-	
+	private static Icon[] _icons;
 	public ItemParts(int par1) {
 		super(par1);
 		this.setHasSubtypes(true);
 	}
-	
+	@Override
+	public void registerIcons(IconRegister iconreg)
+	{
+		_icons=new Icon[4];
+		for(int i=0;i<4;i++)
+		{
+			_icons[i]=iconreg.registerIcon("logisticspipes:"+getUnlocalizedName().replace("item.", "")+"/"+i);
+		}
+	}
     @Override
 	public Icon getIconFromDamage(int par1) {
-    	
-    	/* TODO: fixme
-    	switch(par1) {
-    	case 0: //bow
-    		return Textures.LOGISTICSITEMHUD_PART1_ICONINDEX;
-    	case 1: //glass
-    		return Textures.LOGISTICSITEMHUD_PART2_ICONINDEX;
-    	case 2: //nose bridge
-    		return Textures.LOGISTICSITEMHUD_PART3_ICONINDEX;
-    	case 3: //nano hopper
-    		return Textures.LOGISTICSITEM_NANOHOPPER_ICONINDEX;
-    		default: return super.getIconFromDamage(par1);
-    	}*/
-    	return null;
+    		return _icons[par1%3];
     }
 
 	@Override

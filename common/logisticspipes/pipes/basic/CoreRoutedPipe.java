@@ -961,6 +961,6 @@ public abstract class CoreRoutedPipe extends Pipe implements IRequestItems, IAdj
 	@Override
 	@SideOnly(Side.CLIENT)
 	public IIconProvider getIconProvider() {
-		return LogisticsPipes.dummyIconProvider;
+		return new DummyProvider();
 	}
 }
